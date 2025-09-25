@@ -1,37 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rock Paper Scissors AI</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rock Paper Scissors AI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      margin-top: 20px;
+    }
+    .btn {
+      font-size: 20px;
+      padding: 15px 25px;
+      margin: 10px;
+      border: none;
+      border-radius: 10px;
+      background: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background: #45a049;
+    }
+    #result {
+      font-size: 22px;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    #score {
+      margin-top: 15px;
+      font-size: 18px;
+    }
+    #reset {
+      background: #f44336;
+    }
+    #history {
+      background: #2196F3;
+    }
+  </style>
 </head>
 <body>
-    <h1>Rock Paper Scissors AI</h1>
-    <p>Welcome to the Rock Paper Scissors AI game!</p>
-    <script>
-        // Game Code Here
-        function playGame(playerChoice) {
-            const choices = ['rock', 'paper', 'scissors'];
-            const aiChoice = choices[Math.floor(Math.random() * choices.length)];
-            let result;
+  <h1>🎮 Rock Paper Scissors (AI Edition)</h1>
+  <button class="btn" onclick="play('R')">✊ Rock</button>
+  <button class="btn" onclick="play('P')">✋ Paper</button>
+  <button class="btn" onclick="play('S')">✌ Scissors</button>
+  <button class="btn" id="reset" onclick="resetGame()">🔄 Reset</button>
+  <br>
+  <button class="btn" id="history" onclick="openHistory()">📜 View AI Chat History</button>
 
-            if (playerChoice === aiChoice) {
-                result = 'It\'s a tie!';
-            } else if (
-                (playerChoice === 'rock' && aiChoice === 'scissors') ||
-                (playerChoice === 'paper' && aiChoice === 'rock') ||
-                (playerChoice === 'scissors' && aiChoice === 'paper')
-            ) {
-                result = 'You win!';
-            } else {
-                result = 'AI wins!';
-            }
+  <div id="result"></div>
+  <div id="score">You: 0 | AI: 0</div>
 
-            alert('You chose ' + playerChoice + '. AI chose ' + aiChoice + '. ' + result);
-        }
-    </script>
-    <button onclick="playGame('rock')">Rock</button>
-    <button onclick="playGame('paper')">Paper</button>
-    <button onclick="playGame('scissors')">Scissors</button>
+  <script>
+    let playerHistory = { R: 0, P: 0, S: 0 };
+    let playerScore = 0, aiScore = 0;
+
+    function aiChoice() {
+      let total = playerHistory.R + playerHistory.P + playerHistory.S;
+      if (total === 0) {
+        return ["R", "P", "S"][Math.floor(Math.random() * 3)];
+      }
+      let likelyMove = Object.keys(playerHistory).reduce((a, b) =>
+        playerHistory[a] > playerHistory[b] ? a : b
+      );
+      if (likelyMove === "R") return "P";
+      if (likelyMove === "P") return "S";
+      return "R";
+    }
+
+    function winner(player, ai) {
+      if (player === ai) return "Draw 🤝";
+      if (
+        (player === "R" && ai === "S") ||
+        (player === "P" && ai === "R") ||
+        (player === "S" && ai === "P")
+      ) {
+        playerScore++;
+        return "You win 🎉";
+      } else {
+        aiScore++;
+        return "AI wins 🤖";
+      }
+    }
+
+    function play(player) {
+      let ai = aiChoice();
+      let result = winner(player, ai);
+      document.getElementById("result").innerText =
+        `You chose: ${symbol(player)} | AI chose: ${symbol(ai)}\n${result}`;
+      document.getElementById("score").innerText =
+        `You: ${playerScore} | AI: ${aiScore}`;
+      playerHistory[player]++;
+    }
+
+    function symbol(move) {
+      return move === "R" ? "✊ Rock" :
+             move === "P" ? "✋ Paper" : "✌ Scissors";
+    }
+
+    function resetGame() {
+      playerHistory = { R: 0, P: 0, S: 0 };
+      playerScore = 0;
+      aiScore = 0;
+      document.getElementById("result").innerText = "";
+      document.getElementById("score").innerText = "You: 0 | AI: 0";
+    }
+
+    function openHistory() {
+      window.open("https://chatgpt.com/share/68c7d7da-a674-8012-987d-4ab489193157", "_blank");
+    }
+  </script>
 </body>
 </html>
